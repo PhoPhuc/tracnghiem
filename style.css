@@ -1,0 +1,300 @@
+/* --- Google Font Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap');
+
+/* --- Biến màu (Color Variables) --- */
+:root {
+    --primary-color: #4a90e2; /* Blue */
+    --secondary-color: #50e3c2; /* Teal/Aqua */
+    --accent-color: #f5a623; /* Orange */
+    --background-color: #f7f9fc; /* Light Blue-Gray */
+    --card-background: #ffffff; /* White */
+    --text-color: #4a4a4a; /* Dark Gray */
+    --text-light: #7f8c9b; /* Medium Gray */
+    --border-color: #dce4ec; /* Light Gray-Blue */
+    --correct-color: #2ecc71; /* Emerald Green */
+    --incorrect-color: #e74c3c; /* Alizarin Red */
+    --hover-light-bg: #e9f3ff; /* Very light blue for hover */
+}
+
+/* --- Reset & Body Styles --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Nunito Sans', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 30px 15px; /* Thêm padding trên dưới và hai bên */
+}
+
+/* --- Quiz Container --- */
+.quiz-container {
+    background-color: var(--card-background);
+    padding: 30px 40px; /* Tăng padding */
+    border-radius: 12px; /* Bo góc nhiều hơn */
+    box-shadow: 0 6px 20px rgba(74, 144, 226, 0.15); /* Bóng đổ mềm mại hơn */
+    width: 100%; /* Chiếm full width trên mobile */
+    max-width: 750px; /* Tăng max-width */
+    text-align: center;
+}
+
+h1 {
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    font-size: 2em; /* Tăng kích thước */
+    font-weight: 700;
+}
+
+/* --- Question Card --- */
+.question-block {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 25px 30px; /* Tăng padding thẻ */
+    margin-bottom: 25px;
+    text-align: left;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06); /* Bóng đổ nhẹ hơn cho thẻ */
+    transition: box-shadow 0.3s ease;
+}
+.question-block:hover {
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Bóng đổ rõ hơn khi hover */
+}
+
+.question-text {
+    font-weight: 600; /* Semi-bold */
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    color: var(--text-color);
+}
+
+/* --- Options (MC & General Label Styling) --- */
+.options, .statements-container {
+    margin-top: 15px;
+}
+
+.options label, .tf-label { /* Áp dụng style chung cho label */
+    display: block; /* Đảm bảo layout dọc */
+    margin-bottom: 12px; /* Khoảng cách giữa các lựa chọn */
+    cursor: pointer;
+    padding: 12px 18px; /* Tăng padding */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--card-background);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+    position: relative; /* Cho hiệu ứng */
+}
+.options label:last-child, .tf-label:last-child {
+     margin-bottom: 0; /* Bỏ margin cho mục cuối */
+}
+
+
+.options label:hover, .tf-label:hover {
+    background-color: var(--hover-light-bg);
+    border-color: var(--primary-color);
+    transform: translateY(-1px); /* Hiệu ứng nhấc lên nhẹ */
+}
+
+/* --- Radio Button Styling --- */
+.options input[type="radio"], .tf-label input[type="radio"] {
+    margin-right: 15px;
+    accent-color: var(--primary-color); /* Đổi màu dấu tick của radio */
+    vertical-align: middle;
+    transform: scale(1.1); /* Tăng kích thước radio button nhẹ */
+}
+
+/* --- TF Specific Styling --- */
+.statements-container {
+    padding-left: 0; /* Bỏ thụt lề cũ */
+}
+
+.statement-item {
+    margin-bottom: 20px; /* Khoảng cách giữa các mệnh đề TF */
+    padding: 15px;
+    border: 1px solid #e8e8e8; /* Viền khác một chút */
+    border-radius: 6px;
+    background-color: #fdfdfd; /* Nền hơi khác */
+}
+.statement-item:last-child {
+    margin-bottom: 0;
+}
+
+.statement-text {
+    display: block;
+    margin-bottom: 12px;
+    color: var(--text-light); /* Màu chữ nhạt hơn cho mệnh đề */
+    font-weight: 600;
+}
+
+.tf-options {
+    /* Không cần display: flex nữa vì .tf-label đã là display: block */
+}
+
+.tf-label {
+    /* Kế thừa style từ .options label */
+    /* Có thể thêm style riêng nếu cần */
+}
+
+
+/* --- Buttons --- */
+.button-container {
+    margin-top: 30px; /* Tăng khoảng cách trên nút */
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+}
+
+#submit-btn, #retry-btn {
+    color: white;
+    border: none;
+    padding: 14px 30px; /* Tăng padding nút */
+    font-size: 1.05em;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    flex-grow: 1;
+    max-width: 220px;
+    text-transform: uppercase; /* Viết hoa chữ */
+    letter-spacing: 0.5px; /* Giãn cách chữ */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#submit-btn:hover, #retry-btn:hover {
+    transform: translateY(-2px); /* Hiệu ứng nhấc lên khi hover */
+     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+#submit-btn {
+    background-color: var(--primary-color);
+}
+#submit-btn:hover {
+    background-color: #3a7bc8; /* Màu đậm hơn của primary */
+}
+
+#retry-btn {
+    background-color: var(--accent-color); /* Màu cam cho Retry */
+}
+#retry-btn:hover {
+    background-color: #e09313; /* Màu cam đậm hơn */
+}
+
+/* --- Score & Result Area --- */
+#score-container {
+    margin-top: 35px;
+    font-size: 1.3em; /* Tăng cỡ chữ score */
+    font-weight: 600; /* Semi-bold */
+    color: var(--text-color);
+    padding: 15px 20px; /* Tăng padding */
+    background-color: var(--hover-light-bg); /* Nền xanh nhạt */
+    border: 1px solid var(--primary-color); /* Viền màu primary */
+    border-radius: 8px;
+}
+#score-container strong {
+    color: var(--primary-color); /* Nhấn mạnh điểm thang 10 */
+    font-weight: 700;
+}
+
+#result-container {
+    margin-top: 25px;
+    text-align: left;
+    padding: 20px; /* Tăng padding */
+    background-color: var(--card-background); /* Nền trắng */
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}
+
+#result-container > div,
+#result-container > p {
+    margin-bottom: 15px;
+    padding: 15px; /* Thêm padding cho từng mục kết quả */
+    border-bottom: none; /* Bỏ gạch ngang */
+    border: 1px solid var(--border-color); /* Thêm viền cho từng mục */
+    border-radius: 6px; /* Bo góc nhẹ */
+    background-color: #fafafe; /* Nền nhẹ phân biệt */
+}
+#result-container > div:last-child,
+#result-container > p:last-child {
+    margin-bottom: 0;
+}
+
+/* --- Feedback Styling --- */
+.correct {
+    color: var(--correct-color);
+    font-weight: 700; /* Đậm hơn */
+    padding: 2px 5px;
+    background-color: #e6f9f0; /* Nền xanh lá nhạt */
+    border-radius: 4px;
+}
+
+.incorrect {
+    color: var(--incorrect-color);
+    font-weight: 700; /* Đậm hơn */
+     padding: 2px 5px;
+     background-color: #fceae8; /* Nền đỏ nhạt */
+     border-radius: 4px;
+}
+
+.user-answer {
+     font-weight: 600; /* Semi-bold */
+     text-decoration: none; /* Bỏ gạch chân */
+     color: var(--primary-color); /* Màu xanh cho câu trả lời người dùng */
+     border-bottom: 2px dotted var(--primary-color); /* Gạch chân kiểu chấm */
+     font-style: normal; /* Bỏ in nghiêng */
+}
+
+.statement-result-item {
+     margin-top: 8px;
+     margin-bottom: 8px;
+     padding-left: 10px; /* Giảm thụt lề */
+     font-size: 0.98em; /* Tăng nhẹ */
+     border-left: 3px solid var(--secondary-color); /* Viền màu phụ */
+     padding-top: 5px;
+     padding-bottom: 5px;
+}
+.statement-result-item:last-child {
+     margin-bottom: 0;
+}
+
+/* --- Disabled state --- */
+input[type="radio"]:disabled + * { /* Làm mờ text khi radio bị disable */
+    opacity: 0.7;
+    cursor: default;
+}
+.options label:has(input:disabled):hover,
+.tf-label:has(input:disabled):hover { /* Bỏ hiệu ứng hover khi đã disable */
+     background-color: var(--card-background);
+     border-color: var(--border-color);
+     transform: none;
+}
+
+/* --- Responsive (Optional Basic Example) --- */
+@media (max-width: 600px) {
+    .quiz-container {
+        padding: 20px 25px;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    .question-block {
+        padding: 20px;
+    }
+    #submit-btn, #retry-btn {
+        padding: 12px 20px;
+        font-size: 1em;
+        max-width: 100%; /* Cho nút chiếm full width nếu cần */
+    }
+    #score-container {
+        font-size: 1.15em;
+        padding: 12px 15px;
+    }
+}
+
