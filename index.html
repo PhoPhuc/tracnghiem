@@ -3,24 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trắc Nghiệm Online</title>
+    <title>Trắc Nghiệm Online Nâng Cao</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="quiz-container">
-        <h1>Bài Trắc Nghiệm Vui</h1>
+    <div id="info-screen" class="quiz-container">
+        <h1 id="quiz-title">Tên Bài Thi Sẽ Hiển Thị Ở Đây</h1>
+        <p>Chào mừng bạn đến với bài kiểm tra!</p>
+        <div class="info-details">
+            <p><strong><i class="icon-list-checks"></i> Số lượng câu hỏi:</strong> <span id="info-total-questions">0</span></p>
+            <p><strong><i class="icon-clock"></i> Thời gian làm bài:</strong> <span id="info-time-limit">45</span> phút</p>
+        </div>
+        <p>Nhấn nút bên dưới để bắt đầu làm bài.</p>
+        <button id="start-btn" class="start-button">Vào Thi</button>
+    </div>
+
+    <div id="quiz-section" class="quiz-container" style="display: none;">
+        <div id="timer-container">
+            Thời gian còn lại: <span id="time-left">45:00</span>
+        </div>
 
         <div id="quiz">
             </div>
 
         <div class="button-container">
              <button id="submit-btn">Nộp bài</button>
-             <button id="retry-btn" style="display: none;">Làm lại</button> </div>
+             <button id="retry-btn" style="display: none;">Làm lại</button>
+        </div>
 
+        <div id="score-container" style="display: none;">
+            </div>
 
-        <div id="score-container">
-            Điểm của bạn: <span id="score">0</span> / <span id="total-questions">0</span>
+        <div id="filter-container" style="display: none;">
+            <button class="filter-btn active" data-filter="all">Tất cả</button>
+            <button class="filter-btn" data-filter="correct">Chỉ câu đúng</button>
+            <button class="filter-btn" data-filter="incorrect">Chỉ câu sai</button>
         </div>
 
         <div id="result-container" style="display: none;">
