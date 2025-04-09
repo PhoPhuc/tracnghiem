@@ -1,185 +1,275 @@
-const qaList = document.getElementById('qaList');
-const searchInput = document.getElementById('searchInput');
-const showHiddenBtn = document.getElementById('showHiddenBtn');
-const hiddenCountSpan = document.getElementById('hiddenCount');
-const totalCountSpan = document.getElementById('totalCount');
-let hiddenItems = [];
-const qaData = [
-    { question: 'Phenol là những hợp chất hữu cơ:', answer: 'Có một hay nhiều nhóm hydroxy liên kết trực tiếp với nguyên tử carbon của vòng benzene.' },
-    { question: 'Phenol đơn giản nhất là hợp chất có:', answer: '1 nhóm hydroxy gắn vào vòng benzene không có nhóm thế.' },
-    { question: 'Công thức cấu tạo thu gọn của phenol là:', answer: 'C6H5OH' },
-    { question: 'Những chất nào sau đây thuôc loại monophenol?', answer: 'Phenol, o-cresol.' },
-    { question: 'Những chất nào sau đây thuôc loại polyphenol?', answer: 'Resorcinol, catechol.' },
-    { question: 'Chọn phát biểu sai về tính chất vật lí của phenol:', answer: 'Nhiệt độ sôi thấp hơn các aryl halide có phân tử khối tương đương.' },
-    { question: 'Phenol có nhiệt độ nóng chảy cao hơn các aryl halide có phân tử khối tương đương là do:', answer: 'Tạo được liên kết hydrogen giữa các phân tử.' },
-    { question: 'Phenol tan vô hạn trong nước ở:', answer: '66°C' },
-    { question: 'Khi để lâu trong không khí, phenol sẽ chuyển sang màu gì?', answer: 'Màu hồng.' },
-    { question: 'Khi để lâu trong không khí, phenol bị chuyển sang màu hồng do?', answer: 'Bị oxi hóa bởi oxygen trong không khí.' },
-    { question: 'Phải rất cẩn thận khi làm các thí nghiệm với phenol do:', answer: 'Phenol rất độc và gây bỏng khi tiếp xúc với da' },
-    { question: 'Do nhóm -OH liên kết trực tiếp với vòng benzene dẫn đến:', answer: 'Tăng sự phân cực của liên kết O-H' },
-    { question: 'Benzene-1,3-diol còn có tên gọi khác là:', answer: 'Resorcinol' },
-    { question: 'Phenol thể hiện tính:', answer: 'Acid yếu.' },
-    { question: 'Một trong những hợp chất có tính acid mạnh nhất của phenol là:', answer: 'Picric acid' },
-    { question: 'Chọn phát biểu sai về picric acid:', answer: 'Có công thức hóa học C6H3(NO2)2OH' },
-    { question: 'Nhỏ nước bromine vào dung dịch phenol sẽ có hiện tượng gì?', answer: 'Xuất hiện kết tủa trắng.' },
-    { question: 'Phenol phản ứng với nước bromine tạo ra sản phẩm:', answer: '2,4,6-tribromophenol.' },
-    { question: 'Nguyên liệu chính để sản xuất bisphenol A là:', answer: 'Phenol' },
-    { question: 'Trong công nghiệp, phenol được sản xuất từ:', answer: 'Cumene' },
-    { question: 'Thuốc xịt chloraseptic chứa bao nhiêu phenol?', answer: '0.014' },
-    { question: 'Phenol không phản ứng với chất nào sau đây?', answer: 'NaHCO3' },
-    { question: 'Hợp chất hữu cơ X chứa vòng benzene, có công thức phân tử C7H8O, phản ứng được với dung dịch NaOH. Số chất thỏa mãn tính chất trên là:', answer: '3' },
-    { question: 'Hợp chất hữu cơ X (phân tử chứa vòng benzene) có công thức phân tử là C7H8O2. Khi X tác dụng với Na dư, số mol H2 thu được bằng số mol X tham gia phản ứng. Mặt khác, X tác dụng được với dung dịch NaOH theo tỉ lệ số mol 1: 1. Công thức cấu tạo thu gọn của X là:', answer: 'HOC6H4CH2OH' },
-    { question: 'Cho hỗn hợp X gồm ethanol và phenol tác dụng với Na (dư) thu được 3,36 lít khí hydrogen (đktc). Nếu hỗn hợp X trên tác dụng với nước bromine vừa đủ, thu được 19,86 gam kết tủa trắng 2,4,6-tribromophenol. Thành phần phần trăm theo khối lượng của phenol trong hỗn hợp là: (biết H=1, O=16, Br=80, C=12)', answer: '0.338' },
-    { question: 'Ứng dụng nào sau đây không phải của phenol', answer: 'Bia, rượu' },
-    { question: 'Để nhận biết ba lọ mất nhãn: phenol, styrene, benzyl alcohol, người ta dùng một thuốc thử duy nhất là:', answer: 'Nước bromine.' },
-    { question: 'Hóa chất nào dưới đây dùng để phân biệt 2 lọ mất nhãn chứa dung dịch phenol và benzene.1)Na 2) Dung dịch NaOH 3) Nước bromine', answer: '1, 2 và 3' },
-    { question: 'Ảnh hưởng của nhóm -OH đến gốc C6H5- thể hiện qua phản ứng giữa phenol với :', answer: 'Nước bromine' },
-    { question: 'Một hợp chất X chứa ba nguyên tố C, H, O có tỉ lệ khối lượng mC: mH: mO = 21: 2: 4. Hợp chất X có công thức đơn giản nhất trùng với công thức phân tử. Số đồng phân cấu tạo thuộc loại hợp chất thơm ứng với công thức phân tử của X là:', answer: '5' },
-    { question: 'Vòng benzene trở thành nhóm hút eletron là do:', answer: 'Nhóm -OH liên kết trực tiếp vòng benzene.' },
-    { question: 'Thuốc xịt chloraseptic chứa 1,4% phenol được dùng làm:', answer: 'Thuốc chữa đau họng' },
-    { question: 'Cho 15,5 gam hỗn hợp X và Y liên tiếp nhau trong dãy đồng đẳng của phenol đơn chức tác dụng vừa đủ với 0,5 lít dung dịch NaOH 0,3M. X và Y có công thức phân tử là:', answer: 'C6H5OH, C7H7OH' },
-    { question: 'Ảnh hưởng của nhóm -OH đến gốc C6H5- và ảnh hưởng của gốc C6H5- đến nhóm -OH trong phân tử phenol thể hiện qua phản ứng giữa phenol với:', answer: 'Nước Br2, dung dịch NaOH' },
-    { question: 'Một dung dịch X chứa 5,4 gam chất đồng đẳng của phenol đơn chức. Cho dung dịch X phản ứng với nước bromine (dư), thu được 17,25 gam hợp chất chứa 3 nguyên tử Br trong phân tử, giả sử phản ứng xảy ra hoàn toàn. Công thức phân tử X là:', answer: 'C7H7OH' },
-    { question: 'Cho hỗn hợp gồm 0,2 mol phenol và 0,3 mol ethylene glycol tác dụng với lượng dư potassium thu được V lít H2 ở đktc. Giá trị của V là??', answer: '8.96' },
-    { question: 'Phenol thể hiện tính acid qua phản ứng nào?', answer: 'Thế nguyên tử H ở nhóm -OH' },
-    { question: 'Cho 15,4 gam hỗn hợp o-cresol và ethanol tác dụng với Na dư thu được m gam muối và 2,24 lít khí H2. Giá trị của m là:', answer: '19.8' },
-    { question: 'Hãy chọn phát biểu sai:', answer: 'Phenol có tính acid yếu nhưng mạnh hơn H2CO3.' },
-    { question: '0,54 gam 1 đồng đẳng của phenol đơn chức X phản ứng vừa đủ với 10ml NaOH 0,5M. Công thức phân tử của X là:', answer: 'C7H8O' },
-    { question: 'Để nhận biết các chất ethanol, propenol, ethylene glycol, phenol có thể dùng các cặp chất:', answer: 'Nước Br2 và Cu(OH)2' },
-    { question: 'Cho 0,01 mol phenol tác dụng với lượng dư dung dịch hỗn hợp HNO3 đặc và H2SO4 đặc. Phát biểu nào dưới đây không đúng?', answer: 'Khối lượng picric acid hình thành bằng 6,87 gam.' },
-    { question: 'Cho 9,4 gam phenol (C6H5OH) tác dụng hết với bromine dư thì số mol bromine tham gia phản ứng là:', answer: '0,3 mol' },
-    { question: 'Từ 1,2 kg cumene có thể điều chế được tối đa bao nhiêu gam phenol? Biết hiệu suất toàn bộ quá trình đạt 80%. (Mcumene = 120)', answer: '752 gam' },
-    { question: 'Để điều chế picric acid (2,4,6–trinitrophenol) người ta đi từ 4,7 gam phenol và dùng một lượng HNO3 lớn hơn 50% so với lượng HNO3 cần thiết. Số mol HNO3 đã dùng và khối lượng picric acid thu được lần lượt là (các phản ứng xảy ra hoàn toàn), biết phân tử khối picric acid là 229.', answer: '0,225 mol và 11,45 gam' },
-    { question: 'Chất nào sau đây tác dụng với dung dịch NaOH, Na và dung dịch Br2:', answer: 'C6H5OH' },
-    { question: 'Để thu 22,9 gam picric acid cần m gam phenol. Tính m, biết hiệu suất phản ứng đạt 94%.', answer: '10 gam' },
-    { question: 'No question specified', answer: 'o-cresol' },
-    { question: 'Nhóm -OH liên kết trực tiếp với vòng benzene làm tăng mật độ eletron trong vòng, nhất là ở các vị trí:', answer: 'ortho và para' },
-    { question: 'Cho các phát biểu sau:(a) Phenol tan nhiều trong nước lạnh.(b) Picric acid có tính acid mạnh hơn phenol(c) Cho nước bromine vào dung dịch phenol thấy xuất hiện kết tủa trắng.(d) Phenol làm quỳ tím hóa đỏ.(e) Hợp chấtC6H5−CH2−OHlà phenol.Số phát biểu đúng là:', answer: '2' }
-];
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Tham chiếu DOM (Giữ nguyên) ---
+    const quizContainer = document.getElementById('quiz');
+    const submitButton = document.getElementById('submit-btn');
+    const retryButton = document.getElementById('retry-btn');
+    const scoreContainer = document.getElementById('score-container');
+    const resultContainer = document.getElementById('result-container');
+    // Giữ tham chiếu đến span để reset dễ dàng
+    // const scoreElement = document.getElementById('score');
+    // const totalQuestionsElement = document.getElementById('total-questions');
 
-console.log("Bắt đầu script.");
-console.log("Dữ liệu qaData:", qaData);
 
-function renderQAItems(data) {
-    console.log("Hàm renderQAItems được gọi với:", data);
-    qaList.innerHTML = '';
-    data.forEach((item, index) => {
-        console.log("Đang xử lý mục:", item, "ở index:", index);
-        const qaItem = document.createElement('div');
-        qaItem.classList.add('qa-item');
-        qaItem.dataset.question = item.question.toLowerCase();
-        qaItem.dataset.index = index;
+    // --- Dữ liệu câu hỏi (Cập nhật với type và cấu trúc TF) ---
+    const questions = [
+        {
+            type: 'mc', // Multiple Choice
+            question: "Thủ đô của Việt Nam là gì?",
+            options: ["Thành phố Hồ Chí Minh", "Đà Nẵng", "Hà Nội", "Hải Phòng"],
+            correctAnswer: 2 // Index
+        },
+        {
+            type: 'tf', // True/False
+            question: "Đánh giá các mệnh đề sau về Hệ Mặt Trời:", // Chủ đề chung
+            statements: [
+                { text: "Sao Hỏa là hành tinh lớn nhất trong Hệ Mặt Trời.", correctAnswer: false }, // Mệnh đề 1
+                { text: "Trái Đất là hành tinh thứ ba tính từ Mặt Trời.", correctAnswer: true },   // Mệnh đề 2
+                { text: "Sao Kim có nhiệt độ bề mặt nóng hơn Sao Thủy.", correctAnswer: true },    // Mệnh đề 3
+                { text: "Mặt Trăng của Trái Đất tự phát ra ánh sáng.", correctAnswer: false }     // Mệnh đề 4
+            ]
+        },
+        {
+            type: 'mc',
+            question: "1 + 1 bằng mấy?",
+            options: ["1", "2", "3", "0"],
+            correctAnswer: 1
+        },
+         {
+            type: 'tf', // True/False
+            question: "Xác định tính đúng sai của các phát biểu về Việt Nam:",
+            statements: [
+                { text: "Việt Nam nằm ở khu vực Đông Nam Á.", correctAnswer: true },
+                { text: "Đồng bằng sông Cửu Long là vựa lúa lớn nhất cả nước.", correctAnswer: true },
+                { text: "Thành phố Hồ Chí Minh là thủ đô của Việt Nam.", correctAnswer: false },
+                { text: "Việt Nam có đường bờ biển dài hơn 5000 km.", correctAnswer: false } // Thực tế khoảng 3260km
+            ]
+        },
+        {
+            type: 'mc',
+            question: "Ngôn ngữ lập trình nào phổ biến nhất cho web front-end?",
+            options: ["Python", "Java", "C++", "JavaScript"],
+            correctAnswer: 3
+        },
 
-        const hideButton = document.createElement('button');
-        hideButton.classList.add('hide-button');
-        hideButton.innerHTML = '<i class="fa fa-eye"></i>';
-        hideButton.addEventListener('click', () => hideQAItem(index));
+    ];
 
-        const questionDiv = document.createElement('div');
-        questionDiv.classList.add('question');
-        questionDiv.textContent = item.question;
+    // --- Hàm tính tổng số mục có thể chấm điểm ---
+    function getTotalScorableItems() {
+        let total = 0;
+        questions.forEach(q => {
+            if (q.type === 'mc') {
+                total++;
+            } else if (q.type === 'tf') {
+                total += q.statements.length; // Mỗi mệnh đề là 1 mục
+            }
+        });
+        return total;
+    }
 
-        const answerDiv = document.createElement('div');
-        answerDiv.classList.add('answer');
-        answerDiv.textContent = item.answer;
+    // --- Hàm hiển thị câu hỏi (Cập nhật để xử lý cả 2 type) ---
+    function displayQuestions() {
+        quizContainer.innerHTML = '';
+        const totalItems = getTotalScorableItems(); // Tính tổng số mục chấm điểm
 
-        qaItem.appendChild(hideButton);
-        qaItem.appendChild(questionDiv);
-        qaItem.appendChild(answerDiv);
-        qaList.appendChild(qaItem);
-        console.log("Đã thêm thẻ vào qaList:", qaItem);
-    });
-    updateHiddenCount();
-    updateShowHiddenButtonVisibility();
-    totalCountSpan.textContent = data.length; // Cập nhật tổng số lượng
-    console.log("Số lượng thẻ sau khi render:", qaList.querySelectorAll('.qa-item').length);
-    console.log("Nội dung qaList sau render:", qaList.innerHTML);
-}
+        // Reset điểm số và nội dung hiển thị ban đầu
+        // Hiển thị tổng số mục chấm điểm thay vì số câu hỏi chính
+        scoreContainer.innerHTML = `Điểm của bạn: <span id="score">0</span> / <span id="total-items">${totalItems}</span> mục`;
 
-function hideQAItem(index) {
-    console.log("Hàm hideQAItem được gọi với index:", index);
-    const qaItem = document.querySelector(`.qa-item[data-index="${index}"]`);
-    if (qaItem) {
-        if (!qaItem.classList.contains('hidden')) {
-            qaItem.classList.add('hidden');
-            hiddenItems.push(parseInt(qaItem.dataset.index));
-            console.log("Đã ẩn thẻ index:", index);
-        } else {
-            qaItem.classList.remove('hidden');
-            hiddenItems = hiddenItems.filter(itemIndex => itemIndex !== parseInt(qaItem.dataset.index));
-            console.log("Đã hiện thẻ index:", index);
+        let questionCounter = 0; // Biến đếm số thứ tự câu hỏi chính
+
+        questions.forEach((q, index) => {
+            questionCounter++;
+            const questionBlock = document.createElement('div');
+            questionBlock.classList.add('question-block'); // Thẻ cho câu hỏi
+
+            const questionText = document.createElement('p');
+            questionText.classList.add('question-text');
+            // Hiển thị số thứ tự câu hỏi chính
+            questionText.textContent = `${questionCounter}. ${q.question}`;
+            questionBlock.appendChild(questionText);
+
+            // --- Xử lý hiển thị dựa trên type ---
+            if (q.type === 'mc') {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                q.options.forEach((option, optionIndex) => {
+                    const label = document.createElement('label');
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.name = `question-${index}`; // Name cho câu MC
+                    radioInput.value = optionIndex;
+
+                    label.appendChild(radioInput);
+                    label.appendChild(document.createTextNode(` ${option}`));
+                    optionsDiv.appendChild(label);
+                });
+                questionBlock.appendChild(optionsDiv);
+
+            } else if (q.type === 'tf') {
+                const statementsContainer = document.createElement('div');
+                statementsContainer.classList.add('statements-container');
+
+                q.statements.forEach((statement, subIndex) => {
+                    const statementItem = document.createElement('div');
+                    statementItem.classList.add('statement-item');
+
+                    const statementText = document.createElement('span');
+                    statementText.classList.add('statement-text');
+                    statementText.textContent = statement.text;
+                    statementItem.appendChild(statementText);
+
+                    const tfOptionsDiv = document.createElement('div');
+                    tfOptionsDiv.classList.add('tf-options');
+
+                    // Tạo input Đúng (True)
+                    const trueLabel = document.createElement('label');
+                    trueLabel.classList.add('tf-label');
+                    const trueInput = document.createElement('input');
+                    trueInput.type = 'radio';
+                    // Name phải duy nhất cho từng mệnh đề: question-[index]-statement-[subIndex]
+                    trueInput.name = `question-${index}-statement-${subIndex}`;
+                    trueInput.value = 'true';
+                    trueLabel.appendChild(trueInput);
+                    trueLabel.appendChild(document.createTextNode(' Đúng'));
+                    tfOptionsDiv.appendChild(trueLabel);
+
+                    // Tạo input Sai (False)
+                    const falseLabel = document.createElement('label');
+                    falseLabel.classList.add('tf-label');
+                    const falseInput = document.createElement('input');
+                    falseInput.type = 'radio';
+                    falseInput.name = `question-${index}-statement-${subIndex}`; // Cùng name với True
+                    falseInput.value = 'false';
+                    falseLabel.appendChild(falseInput);
+                    falseLabel.appendChild(document.createTextNode(' Sai'));
+                    tfOptionsDiv.appendChild(falseLabel);
+
+                    statementItem.appendChild(tfOptionsDiv);
+                    statementsContainer.appendChild(statementItem);
+                });
+                questionBlock.appendChild(statementsContainer);
+            }
+
+            quizContainer.appendChild(questionBlock);
+        });
+
+        // Reset trạng thái nút và kết quả
+        resultContainer.style.display = 'none';
+        resultContainer.innerHTML = '';
+        retryButton.style.display = 'none';
+        submitButton.style.display = 'inline-block';
+        submitButton.disabled = false;
+    }
+
+    // --- Hàm tính điểm và hiển thị kết quả (Cập nhật để xử lý cả 2 type) ---
+    function calculateScore() {
+        let currentScore = 0; // Tổng điểm thô
+        resultContainer.innerHTML = '';
+        resultContainer.style.display = 'block';
+
+        const totalItems = getTotalScorableItems(); // Lấy tổng số mục chấm điểm
+        let questionCounter = 0; // Biến đếm số thứ tự câu hỏi chính
+
+        questions.forEach((q, index) => {
+            questionCounter++;
+             // --- Xử lý điểm và kết quả dựa trên type ---
+             if (q.type === 'mc') {
+                 const resultP = document.createElement('p'); // Tạo p riêng cho mỗi câu MC
+                 resultP.innerHTML = `<strong>Câu ${questionCounter} (Trắc nghiệm):</strong> ${q.question}<br>`;
+
+                 const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+                 const allOptionsInputs = document.querySelectorAll(`input[name="question-${index}"]`);
+
+                 // Vô hiệu hóa lựa chọn MC
+                 allOptionsInputs.forEach(input => input.disabled = true);
+
+                 if (selectedOption) {
+                    const userAnswerIndex = parseInt(selectedOption.value);
+                    const correctAnswerText = q.options[q.correctAnswer];
+                    const userAnswerText = q.options[userAnswerIndex];
+
+                    resultP.innerHTML += `&nbsp;&nbsp;Bạn chọn: <span class="user-answer">${userAnswerText}</span>. `;
+
+                    if (userAnswerIndex === q.correctAnswer) {
+                        currentScore++; // Tăng điểm
+                        resultP.innerHTML += `<span class="correct">Đúng!</span>`;
+                    } else {
+                        resultP.innerHTML += `<span class="incorrect">Sai.</span> Đáp án đúng là: <span class="correct">${correctAnswerText}</span>`;
+                    }
+                 } else {
+                    const correctAnswerText = q.options[q.correctAnswer];
+                    resultP.innerHTML += `&nbsp;&nbsp;<span class="incorrect">Bạn chưa trả lời.</span> Đáp án đúng là: <span class="correct">${correctAnswerText}</span>`;
+                 }
+                 resultContainer.appendChild(resultP); // Thêm kết quả câu MC vào container
+
+             } else if (q.type === 'tf') {
+                 const resultP = document.createElement('div'); // Dùng div để chứa nhiều dòng kết quả cho TF
+                 resultP.innerHTML = `<strong>Câu ${questionCounter} (Đúng/Sai):</strong> ${q.question}<br>`;
+
+                 q.statements.forEach((statement, subIndex) => {
+                     const statementResultDiv = document.createElement('div'); // div cho kết quả từng mệnh đề
+                     statementResultDiv.classList.add('statement-result-item');
+                     statementResultDiv.innerHTML = `&nbsp;&nbsp;- ${statement.text}: `;
+
+                     const selectedTF = document.querySelector(`input[name="question-${index}-statement-${subIndex}"]:checked`);
+                     const allTFInputs = document.querySelectorAll(`input[name="question-${index}-statement-${subIndex}"]`);
+
+                     // Vô hiệu hóa lựa chọn T/F
+                     allTFInputs.forEach(input => input.disabled = true);
+
+                     const correctAnswerBool = statement.correctAnswer; // boolean
+                     const correctAnswerText = correctAnswerBool ? "Đúng" : "Sai";
+
+                     if (selectedTF) {
+                        const userAnswerValue = selectedTF.value; // "true" hoặc "false" (string)
+                        const userAnswerBool = (userAnswerValue === 'true'); // Chuyển sang boolean
+
+                        statementResultDiv.innerHTML += `Bạn chọn <span class="user-answer">${userAnswerValue === 'true' ? 'Đúng' : 'Sai'}</span>. `;
+
+                        if (userAnswerBool === correctAnswerBool) {
+                            currentScore++; // Tăng điểm
+                            statementResultDiv.innerHTML += `<span class="correct">Chính xác!</span>`;
+                        } else {
+                            statementResultDiv.innerHTML += `<span class="incorrect">Không đúng.</span> Đáp án là: <span class="correct">${correctAnswerText}</span>`;
+                        }
+                     } else {
+                        statementResultDiv.innerHTML += `<span class="incorrect">Bạn chưa trả lời.</span> Đáp án là: <span class="correct">${correctAnswerText}</span>`;
+                     }
+                      resultP.appendChild(statementResultDiv); // Thêm kết quả mệnh đề vào div chung của câu TF
+                 });
+                 resultContainer.appendChild(resultP); // Thêm kết quả câu TF vào container
+             }
+        });
+
+        // --- Tính điểm thang 10 dựa trên tổng số mục chấm điểm ---
+        let scaledScore = 0;
+        if (totalItems > 0) {
+            scaledScore = (currentScore / totalItems) * 10;
         }
-        updateHiddenCount();
-        updateShowHiddenButtonVisibility();
-        filterQAItems();
-    } else {
-        console.warn("Không tìm thấy thẻ với index:", index);
+        const roundedScaledScore = scaledScore.toFixed(1);
+
+        // --- Cập nhật hiển thị điểm ---
+        scoreContainer.innerHTML = `Kết quả: ${currentScore} / ${totalItems} mục đúng - <strong style="font-size: 1.1em;">Điểm (Thang 10): ${roundedScaledScore}</strong>`;
+
+        // --- Cập nhật trạng thái nút ---
+        submitButton.style.display = 'none';
+        retryButton.style.display = 'inline-block';
+
+        // --- Cuộn xuống kết quả ---
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-}
 
-function updateHiddenCount() {
-    const count = hiddenItems.length;
-    hiddenCountSpan.textContent = count;
-    console.log("Số lượng thẻ ẩn:", count);
-}
-
-function updateShowHiddenButtonVisibility() {
-    if (hiddenItems.length > 0) {
-        showHiddenBtn.style.display = 'block';
-        console.log("Hiển thị nút 'Hiện thẻ ẩn'.");
-    } else {
-        showHiddenBtn.style.display = 'none';
-        console.log("Ẩn nút 'Hiện thẻ ẩn'.");
+    // --- Hàm xử lý khi nhấn nút Làm lại (Giữ nguyên) ---
+    function retryQuiz() {
+        displayQuestions();
+        quizContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-}
 
-showHiddenBtn.addEventListener('click', () => {
-    console.log("Nút 'Hiện thẻ ẩn' được click.");
-    const allQaItems = document.querySelectorAll('.qa-item.hidden');
-    allQaItems.forEach(item => {
-        item.classList.remove('hidden');
-        console.log("Đã hiện thẻ:", item);
-    });
-    hiddenItems = [];
-    updateHiddenCount();
-    updateShowHiddenButtonVisibility();
-    filterQAItems();
+    // --- Gắn sự kiện (Giữ nguyên) ---
+    submitButton.addEventListener('click', calculateScore);
+    retryButton.addEventListener('click', retryQuiz);
+
+    // --- Hiển thị câu hỏi ban đầu ---
+    displayQuestions();
 });
-
-function filterQAItems() {
-    const searchTerm = searchInput.value.toLowerCase();
-    console.log("Hàm filterQAItems được gọi với searchTerm:", searchTerm);
-    const allQaItems = document.querySelectorAll('.qa-item');
-
-    allQaItems.forEach(item => {
-        const question = item.dataset.question;
-        const questionElement = item.querySelector('.question');
-        const answerElement = item.querySelector('.answer');
-
-        const isHidden = item.classList.contains('hidden');
-
-        if (question.includes(searchTerm) && !isHidden) {
-            item.style.display = 'block';
-            const highlightedQuestion = question.replace(new RegExp(searchTerm, 'gi'), match => `<span class="highlight">${match}</span>`);
-            const highlightedAnswer = answerElement.textContent.replace(new RegExp(searchTerm, 'gi'), match => `<span class="highlight">${match}</span>`);
-            questionElement.innerHTML = highlightedQuestion;
-            answerElement.innerHTML = highlightedAnswer;
-        } else if (!searchTerm && !isHidden) {
-            item.style.display = 'block';
-            questionElement.innerHTML = item.dataset.question;
-            answerElement.innerHTML = answerElement.textContent; // Reset highlight
-        } else {
-            item.style.display = 'none';
-            questionElement.innerHTML = item.dataset.question;
-            answerElement.innerHTML = answerElement.textContent; // Reset highlight
-        }
-    });
-}
-
-searchInput.addEventListener('input', filterQAItems);
-
-console.log("Gọi hàm renderQAItems ban đầu.");
-renderQAItems(qaData);
-console.log("Giá trị của totalCountSpan sau render:", totalCountSpan.textContent);
-console.log("Giá trị ban đầu của hiddenCountSpan:", hiddenCountSpan.textContent);
-console.log("Kết thúc script.");
