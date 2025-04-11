@@ -3,49 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trắc Nghiệm Online Nâng Cao</title>
+    <title>Ôn Thi Trắc Nghiệm Đa Môn Học</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
 
-    <div id="info-screen" class="quiz-container">
-        <h1 id="quiz-title">Tên Bài Thi Sẽ Hiển Thị Ở Đây</h1>
-        <p>Chào mừng bạn đến với bài kiểm tra!</p>
-        <div class="info-details">
-            <p><strong><i class="icon-list-checks"></i> Số lượng câu hỏi:</strong> <span id="info-total-questions">0</span></p>
-            <p><strong><i class="icon-clock"></i> Thời gian làm bài:</strong> <span id="info-time-limit">45</span> phút</p>
-        </div>
-        <p>Nhấn nút bên dưới để bắt đầu làm bài.</p>
-        <button id="start-btn" class="start-button">Vào Thi</button>
-    </div>
+    <div id="app-container">
 
-    <div id="quiz-section" class="quiz-container" style="display: none;">
-        <div id="timer-container">
-            Thời gian còn lại: <span id="time-left">45:00</span>
-        </div>
-
-        <div id="quiz">
+        <div id="subject-selection-screen" class="screen active">
+            <div class="screen-container">
+                <h1>Chọn Môn Học</h1>
+                <p>Chọn môn học bạn muốn ôn tập trắc nghiệm:</p>
+                <div id="subject-list" class="grid-container">
+                    </div>
             </div>
-
-        <div class="button-container">
-             <button id="submit-btn">Nộp bài</button>
-             <button id="retry-btn" style="display: none;">Làm lại</button>
         </div>
 
-        <div id="score-container" style="display: none;">
+        <div id="quiz-list-screen" class="screen">
+            <div class="screen-container">
+                <button id="back-to-subjects-btn" class="back-button"><i class="ph ph-arrow-left"></i> Quay lại</button>
+                <h1 id="quiz-list-title">Danh sách bài thi môn: <span>...</span></h1>
+                <div id="quiz-list" class="list-container">
+                    </div>
             </div>
-
-        <div id="filter-container" style="display: none;">
-            <button class="filter-btn active" data-filter="all">Tất cả</button>
-            <button class="filter-btn" data-filter="correct">Chỉ câu đúng</button>
-            <button class="filter-btn" data-filter="incorrect">Chỉ câu sai</button>
         </div>
 
-        <div id="result-container" style="display: none;">
-            </div>
-    </div>
+        <div id="info-screen" class="screen">
+             <div class="screen-container info-container">
+                <button id="back-to-quiz-list-btn" class="back-button"><i class="ph ph-arrow-left"></i> Quay lại</button>
+                <h1 id="quiz-title">Tên Bài Thi</h1>
+                <p>Thông tin chi tiết về bài thi:</p>
+                <div class="info-details">
+                    <p><strong><i class="ph ph-list-checks"></i> Số lượng câu hỏi:</strong> <span id="info-total-questions">0</span></p>
+                    <p><strong><i class="ph ph-timer"></i> Thời gian làm bài:</strong> <span id="info-time-limit">0</span> phút</p>
+                </div>
+                <p>Nhấn nút bên dưới để bắt đầu làm bài.</p>
+                <button id="start-btn" class="start-button">Bắt đầu làm bài</button>
+             </div>
+        </div>
 
-    <script src="script.js"></script>
+        <div id="quiz-section" class="screen">
+            <div class="screen-container quiz-active-container">
+                <div id="timer-container">
+                    <i class="ph ph-timer"></i> Thời gian: <span id="time-left">00:00</span>
+                </div>
+
+                <div id="quiz">
+                    </div>
+
+                <div class="button-container">
+                     <button id="submit-btn">Nộp bài</button>
+                     <button id="retry-btn" style="display: none;">Làm lại</button>
+                     <button id="back-to-list-after-result-btn" style="display: none;" class="secondary-button">Về danh sách bài thi</button>
+                </div>
+
+                <div id="score-container" style="display: none;">
+                    </div>
+
+                <div id="filter-container" style="display: none;">
+                    <button class="filter-btn active" data-filter="all">Tất cả</button>
+                    <button class="filter-btn" data-filter="correct">Chỉ câu đúng</button>
+                    <button class="filter-btn" data-filter="incorrect">Chỉ câu sai</button>
+                </div>
+
+                <div id="result-container" style="display: none;">
+                    </div>
+            </div>
+        </div>
+
+    </div><script src="index.js"></script>
 </body>
 </html>
