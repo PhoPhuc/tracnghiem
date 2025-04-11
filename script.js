@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LOGIC COUNTDOWN ĐẾN NGÀY THI ---
     // --- THAY ĐỔI NGÀY GIỜ KẾT THÚC TẠI ĐÂY ---
-    const countdownDate = new Date("April 12, 2025 00:00:00").getTime(); // Ngày thi dự kiến
+    const countdownDate = new Date("May 12, 2025 08:00:00").getTime(); // Ngày thi dự kiến
     // --------------------------------------------
     const messageEl = document.getElementById('message');
     const countdownEl = document.getElementById('countdown');
