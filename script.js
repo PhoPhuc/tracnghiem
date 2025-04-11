@@ -1,61 +1,211 @@
+// your code goes here
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Tham chiếu DOM (Giữ nguyên) ---
-    const infoScreen = document.getElementById('info-screen');
-    const quizSection = document.getElementById('quiz-section');
+    // --- Tham chiếu DOM cho các màn hình và phần tử chính ---
+    const appContainer = document.getElementById('app-container');
+    const screens = {
+        subjectSelection: document.getElementById('subject-selection-screen'),
+        quizList: document.getElementById('quiz-list-screen'),
+        info: document.getElementById('info-screen'),
+        quiz: document.getElementById('quiz-section'),
+    };
+    const subjectListContainer = document.getElementById('subject-list');
+    const quizListContainer = document.getElementById('quiz-list');
+    const quizListTitle = document.getElementById('quiz-list-title').querySelector('span');
+    const backToSubjectsBtn = document.getElementById('back-to-subjects-btn');
+    const backToQuizListBtn = document.getElementById('back-to-quiz-list-btn');
+    const backToListAfterResultBtn = document.getElementById('back-to-list-after-result-btn');
+
+    // Tham chiếu DOM cho màn hình thông tin bài thi
+    const infoQuizTitle = document.getElementById('quiz-title');
+    const infoTotalQuestions = document.getElementById('info-total-questions');
+    const infoTimeLimit = document.getElementById('info-time-limit');
     const startBtn = document.getElementById('start-btn');
+
+    // Tham chiếu DOM cho màn hình làm bài thi
     const timerContainer = document.getElementById('timer-container');
     const timeLeftElement = document.getElementById('time-left');
-    const quizContainer = document.getElementById('quiz');
+    const quizContentContainer = document.getElementById('quiz'); // Đổi tên để rõ ràng hơn
     const submitButton = document.getElementById('submit-btn');
-    const retryButton = document.getElementById('retry-btn');
+    const retryButton = document.getElementById('retry-btn'); // Nút này giờ sẽ quay lại quiz list
     const scoreContainer = document.getElementById('score-container');
     const filterContainer = document.getElementById('filter-container');
     const resultContainer = document.getElementById('result-container');
 
-    // --- Cấu hình Quiz (Giữ nguyên) ---
-    const QUIZ_TITLE = "Bài Kiểm Tra Kiến Thức Tổng Hợp";
-    const TIME_LIMIT_MINUTES = 45;
-    let timerIntervalId = null;
-    let remainingTime = TIME_LIMIT_MINUTES * 60;
+    // --- Trạng thái ứng dụng ---
+    let currentView = 'subjectSelection'; // Màn hình hiện tại
+    let selectedSubjectSlug = null;     // Môn học đang chọn (vd: 'vat-li')
+    let selectedQuizData = null;        // Dữ liệu của bài thi đang chọn/làm
+    let timerIntervalId = null;         // ID của interval timer
+    let remainingTime = 0;              // Thời gian còn lại (giây)
 
-    // --- Dữ liệu câu hỏi (Giữ nguyên) ---
-    const questions = [
-         { type: 'mc', question: "Thủ đô của Việt Nam là gì?", options: ["TP. Hồ Chí Minh", "Đà Nẵng", "Hà Nội", "Hải Phòng"], correctAnswer: 2 },
-         { type: 'tf', question: "Đánh giá các mệnh đề về Hệ Mặt Trời:", statements: [ { text: "Sao Hỏa lớn nhất Hệ Mặt Trời.", correctAnswer: false }, { text: "Trái Đất là hành tinh thứ 3.", correctAnswer: true }, { text: "Sao Kim nóng hơn Sao Thủy.", correctAnswer: true }, { text: "Mặt Trăng tự phát sáng.", correctAnswer: false } ] },
-         { type: 'mc', question: "1 + 1 bằng mấy?", options: ["1", "2", "3", "0"], correctAnswer: 1 },
-         { type: 'tf', question: "Xác định tính đúng sai về Việt Nam:", statements: [ { text: "Việt Nam ở Đông Nam Á.", correctAnswer: true }, { text: "ĐBSCL là vựa lúa lớn nhất.", correctAnswer: true }, { text: "TP. HCM là thủ đô.", correctAnswer: false }, { text: "Bờ biển dài > 5000 km.", correctAnswer: false } ] },
-         { type: 'mc', question: "Ngôn ngữ phổ biến nhất cho web front-end?", options: ["Python", "Java", "C++", "JavaScript"], correctAnswer: 3 },
-    ];
+    // --- Dữ liệu Quiz (Tổ chức theo môn học) ---
+    // !!! QUAN TRỌNG: Đây chỉ là dữ liệu mẫu. Bạn cần thay thế bằng dữ liệu thật !!!
+    const quizData = {
+        'vat-li': {
+            subjectName: 'Vật lí',
+            icon: 'ph-atom', // Tên icon từ Phosphor Icons
+            quizzes: [
+                {
+                    id: 'vl-1',
+                    title: 'Đề 1: Dao Động Cơ',
+                    timeLimitMinutes: 30,
+                    questions: [
+                        { type: 'mc', question: "Công thức tính chu kỳ dao động của con lắc lò xo?", options: ["T=2π√(m/k)", "T=2π√(k/m)", "T=2π√(l/g)", "T=1/f"], correctAnswer: 0 },
+                        { type: 'tf', question: "Đánh giá về dao động điều hòa:", statements: [ { text: "Li độ biến thiên điều hòa theo thời gian.", correctAnswer: true }, { text: "Vận tốc luôn cùng pha với li độ.", correctAnswer: false }, { text: "Gia tốc luôn ngược pha với li độ.", correctAnswer: true }, { text: "Năng lượng được bảo toàn nếu bỏ qua ma sát.", correctAnswer: true } ] },
+                        // Thêm câu hỏi khác cho đề VL-1
+                    ]
+                },
+                {
+                    id: 'vl-2',
+                    title: 'Đề 2: Sóng Cơ',
+                    timeLimitMinutes: 45,
+                    questions: [
+                         { type: 'mc', question: "Sóng ngang truyền được trong môi trường nào?", options: ["Chất rắn và bề mặt chất lỏng", "Chất khí", "Chân không", "Cả rắn, lỏng, khí"], correctAnswer: 0 },
+                         // Thêm câu hỏi khác
+                    ]
+                }
+            ]
+        },
+        'hoa-hoc': {
+            subjectName: 'Hoá học',
+            icon: 'ph-flask',
+            quizzes: [
+                {
+                    id: 'hh-1',
+                    title: 'Đề 1: Nguyên Tử',
+                    timeLimitMinutes: 20,
+                    questions: [
+                        { type: 'mc', question: "Hạt nhân nguyên tử được cấu tạo bởi?", options: ["Proton và Electron", "Neutron và Electron", "Proton và Neutron", "Chỉ Proton"], correctAnswer: 2 },
+                        // Thêm câu hỏi khác
+                    ]
+                }
+            ]
+        },
+        'lich-su': {
+            subjectName: 'Lịch sử',
+            icon: 'ph-scroll',
+            quizzes: [ /* Thêm các bài thi lịch sử */ ]
+        },
+        'sinh-hoc': {
+            subjectName: 'Sinh học',
+            icon: 'ph-dna',
+            quizzes: [ /* Thêm các bài thi sinh học */ ]
+        },
+        'tin-hoc': {
+            subjectName: 'Tin học',
+            icon: 'ph-laptop',
+            quizzes: [
+                 {
+                    id: 'th-1',
+                    title: 'Đề 1: Cơ Bản Về Máy Tính',
+                    timeLimitMinutes: 25,
+                    questions: [
+                        { type: 'mc', question: "CPU là viết tắt của?", options: ["Central Processing Unit", "Computer Processing Unit", "Central Program Unit", "Control Processing Unit"], correctAnswer: 0 },
+                        { type: 'tf', question: "Đánh giá về phần cứng và phần mềm:", statements: [ { text: "RAM là bộ nhớ truy cập ngẫu nhiên.", correctAnswer: true }, { text: "Hệ điều hành là một phần cứng.", correctAnswer: false }, { text: "Màn hình là thiết bị nhập.", correctAnswer: false }, { text: "Chuột là thiết bị xuất.", correctAnswer: false } ] },
+                    ]
+                }
+             ]
+        }
+        // Thêm các môn học khác nếu cần
+    };
 
-    // --- Hàm tính tổng số mục chấm điểm (Giữ nguyên - có thể không cần dùng nữa) ---
-    function getTotalScorableItems() {
-        let total = 0;
-        questions.forEach(q => {
-            if (q.type === 'mc') total++;
-            else if (q.type === 'tf') total += q.statements.length;
+    // --- Hàm chuyển đổi màn hình ---
+    function navigateTo(screenId) {
+        Object.values(screens).forEach(screen => {
+            screen.classList.remove('active');
         });
-        return total;
-    }
-    // --- Hàm tính tổng số câu hỏi chính (Giữ nguyên) ---
-    function getTotalMainQuestions() {
-        return questions.length;
-    }
-
-    // --- Hàm cập nhật màn hình thông tin (Giữ nguyên) ---
-    function updateInfoScreen() {
-        document.getElementById('quiz-title').textContent = QUIZ_TITLE;
-        document.getElementById('info-total-questions').textContent = getTotalMainQuestions();
-        document.getElementById('info-time-limit').textContent = TIME_LIMIT_MINUTES;
+        if (screens[screenId]) {
+            screens[screenId].classList.add('active');
+            currentView = screenId;
+            // Cuộn lên đầu trang khi chuyển màn hình
+            window.scrollTo(0, 0);
+        } else {
+            console.error("Screen ID not found:", screenId);
+        }
     }
 
-    // --- Hàm hiển thị câu hỏi (Giữ nguyên) ---
-    function displayQuestions() {
-        quizContainer.innerHTML = '';
+    // --- Hàm hiển thị danh sách môn học ---
+    function displaySubjectSelection() {
+        subjectListContainer.innerHTML = ''; // Xóa danh sách cũ
+        for (const slug in quizData) {
+            const subject = quizData[slug];
+            const card = document.createElement('div');
+            card.classList.add('subject-card');
+            card.dataset.subject = slug; // Lưu slug vào data attribute
+            card.innerHTML = `
+                <i class="ph ${subject.icon || 'ph-book-open'}"></i>
+                <h3>${subject.subjectName}</h3>
+            `;
+            card.addEventListener('click', () => {
+                selectedSubjectSlug = slug;
+                displayQuizList(slug);
+            });
+            subjectListContainer.appendChild(card);
+        }
+        navigateTo('subjectSelection');
+    }
+
+    // --- Hàm hiển thị danh sách bài thi của môn học ---
+    function displayQuizList(subjectSlug) {
+        const subject = quizData[subjectSlug];
+        if (!subject) {
+            console.error("Subject not found:", subjectSlug);
+            navigateTo('subjectSelection'); // Quay về nếu không tìm thấy môn
+            return;
+        }
+
+        quizListTitle.textContent = subject.subjectName;
+        quizListContainer.innerHTML = ''; // Xóa danh sách cũ
+
+        if (subject.quizzes && subject.quizzes.length > 0) {
+            subject.quizzes.forEach(quiz => {
+                const listItem = document.createElement('div');
+                listItem.classList.add('quiz-list-item');
+                listItem.dataset.quizId = quiz.id; // Lưu id bài thi
+                listItem.innerHTML = `
+                    <span>${quiz.title}</span>
+                    <i class="ph ph-caret-right"></i>
+                `;
+                listItem.addEventListener('click', () => {
+                    // Tìm đúng quiz data dựa vào id
+                    selectedQuizData = subject.quizzes.find(q => q.id === quiz.id);
+                    if (selectedQuizData) {
+                        displayQuizInfo();
+                    } else {
+                        console.error("Quiz not found:", quiz.id);
+                    }
+                });
+                quizListContainer.appendChild(listItem);
+            });
+        } else {
+            quizListContainer.innerHTML = '<p>Chưa có bài thi nào cho môn học này.</p>';
+        }
+        navigateTo('quizList');
+    }
+
+    // --- Hàm hiển thị thông tin chi tiết bài thi ---
+    function displayQuizInfo() {
+        if (!selectedQuizData) {
+            console.error("No quiz selected to display info.");
+            navigateTo('quizList'); // Quay về nếu không có dữ liệu quiz
+            return;
+        }
+        infoQuizTitle.textContent = selectedQuizData.title;
+        // Tính số câu hỏi chính cho bài thi này
+        const mainQuestionsCount = selectedQuizData.questions.length;
+        infoTotalQuestions.textContent = mainQuestionsCount;
+        infoTimeLimit.textContent = selectedQuizData.timeLimitMinutes;
+        navigateTo('info');
+    }
+
+    // --- Hàm hiển thị câu hỏi (Chấp nhận mảng câu hỏi làm tham số) ---
+    function displayQuizContent(questionsArray) {
+        quizContentContainer.innerHTML = '';
         let questionCounter = 0;
-        questions.forEach((q, index) => {
-            questionCounter++;
-            const questionBlock = document.createElement('div');
-            questionBlock.classList.add('question-block');
+        questionsArray.forEach((q, index) => {
+             questionCounter++;
+             const questionBlock = document.createElement('div');
+             questionBlock.classList.add('question-block');
              const questionText = document.createElement('p');
              questionText.classList.add('question-text');
              questionText.textContent = `${questionCounter}. ${q.question}`;
@@ -88,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      statementItem.appendChild(statementText);
                      const tfOptionsDiv = document.createElement('div');
                      tfOptionsDiv.classList.add('tf-options');
+                     // True/False labels and inputs... (như cũ)
                      // True
                      const trueLabel = document.createElement('label');
                      trueLabel.classList.add('tf-label');
@@ -116,20 +267,23 @@ document.addEventListener('DOMContentLoaded', () => {
                  });
                  questionBlock.appendChild(statementsContainer);
              }
-             quizContainer.appendChild(questionBlock);
+             quizContentContainer.appendChild(questionBlock);
         });
+        // Reset các thành phần khác trong màn hình quiz
         resultContainer.style.display = 'none';
         resultContainer.innerHTML = '';
         scoreContainer.style.display = 'none';
         filterContainer.style.display = 'none';
         retryButton.style.display = 'none';
+        backToListAfterResultBtn.style.display = 'none'; // Ẩn nút quay lại sau kết quả
         submitButton.style.display = 'inline-block';
         submitButton.disabled = false;
     }
 
-    // --- Hàm bắt đầu bộ đếm thời gian (Giữ nguyên) ---
-    function startTimer() {
-        remainingTime = TIME_LIMIT_MINUTES * 60;
+    // --- Hàm bắt đầu bộ đếm thời gian ---
+    function startTimer(durationMinutes) {
+        if (timerIntervalId) clearInterval(timerIntervalId); // Xóa timer cũ nếu có
+        remainingTime = durationMinutes * 60;
         updateTimerDisplay();
         timerIntervalId = setInterval(() => {
             remainingTime--;
@@ -138,64 +292,70 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
-    // --- Hàm cập nhật hiển thị thời gian (Giữ nguyên) ---
+    // --- Hàm cập nhật hiển thị thời gian ---
     function updateTimerDisplay() {
-        if (remainingTime < 0) remainingTime = 0;
-        const minutes = Math.floor(remainingTime / 60);
-        const seconds = remainingTime % 60;
-        timeLeftElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        if (remainingTime <= 60 && remainingTime > 0) {
+         if (remainingTime < 0) remainingTime = 0;
+         const minutes = Math.floor(remainingTime / 60);
+         const seconds = remainingTime % 60;
+         timeLeftElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+         // Logic đổi màu timer (giữ nguyên)
+         if (remainingTime <= 60 && remainingTime > 0) {
             timerContainer.style.backgroundColor = 'var(--incorrect-option-bg)';
             timerContainer.style.borderColor = 'var(--incorrect-color)';
             timerContainer.style.color = 'var(--incorrect-color)';
-        } else {
+         } else {
             timerContainer.style.backgroundColor = 'var(--timer-bg)';
             timerContainer.style.borderColor = 'var(--timer-border)';
             timerContainer.style.color = 'var(--timer-text)';
-        }
+         }
     }
 
-    // --- Hàm xử lý khi hết giờ (Giữ nguyên) ---
+    // --- Hàm xử lý khi hết giờ ---
     function handleTimeUp() {
         clearInterval(timerIntervalId);
+        timerIntervalId = null;
         alert("Đã hết thời gian làm bài! Bài thi sẽ được nộp tự động.");
         calculateScore(true);
     }
 
-    // --- Hàm tính điểm và hiển thị kết quả (Sửa lại cách tính điểm TF) ---
+    // --- Hàm tính điểm và hiển thị kết quả ---
     function calculateScore(isAutoSubmit = false) {
+        if (!selectedQuizData) return; // Không có dữ liệu bài thi để chấm
+
         if (timerIntervalId) {
             clearInterval(timerIntervalId);
             timerIntervalId = null;
         }
 
-        let totalScore = 0; // Điểm tổng (thang 10)
+        let totalScore = 0;
         resultContainer.innerHTML = '';
-
-        const totalMainQuestions = getTotalMainQuestions();
+        const currentQuestions = selectedQuizData.questions; // Lấy câu hỏi của bài thi hiện tại
+        const totalMainQuestions = currentQuestions.length;
         const pointsPerMainQuestion = totalMainQuestions > 0 ? (10 / totalMainQuestions) : 0;
         let questionCounter = 0;
 
-        questions.forEach((q, index) => {
+        currentQuestions.forEach((q, index) => {
             questionCounter++;
-            let isQuestionCorrectForFilter = false; // Cờ để đánh dấu câu hỏi đúng/sai cho bộ lọc
-            let questionPoints = 0; // Điểm đạt được cho câu hỏi này
+            let isQuestionCorrectForFilter = false;
+            let questionPoints = 0;
 
              if (q.type === 'mc') {
                  const resultP = document.createElement('p');
                  resultP.innerHTML = `<strong>Câu ${questionCounter} (Trắc nghiệm):</strong> ${q.question}<br>`;
-                 const selectedOptionInput = document.querySelector(`input[name="question-${index}"]:checked`);
-                 const allOptionsInputs = document.querySelectorAll(`input[name="question-${index}"]`);
+                 const selectedOptionInput = quizContentContainer.querySelector(`input[name="question-${index}"]:checked`); // Tìm trong quizContentContainer
+                 const allOptionsInputs = quizContentContainer.querySelectorAll(`input[name="question-${index}"]`);
                  const correctAnswerIndex = q.correctAnswer;
                  let userAnswerIndex = -1;
 
                  allOptionsInputs.forEach((input, optIndex) => {
                      input.disabled = true;
                      const label = input.closest('label');
-                     if (optIndex === correctAnswerIndex) label.classList.add('correct-option');
-                     if (input.checked) {
-                         userAnswerIndex = parseInt(input.value);
-                         if (userAnswerIndex !== correctAnswerIndex) label.classList.add('incorrect-option');
+                     if(label){ // Kiểm tra label tồn tại
+                         if (optIndex === correctAnswerIndex) label.classList.add('correct-option');
+                         if (input.checked) {
+                             userAnswerIndex = parseInt(input.value);
+                             if (userAnswerIndex !== correctAnswerIndex) label.classList.add('incorrect-option');
+                         }
                      }
                  });
 
@@ -204,15 +364,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     const userAnswerText = q.options[userAnswerIndex];
                     resultP.innerHTML += `&nbsp;&nbsp;Bạn chọn: <span class="user-answer">${userAnswerText}</span>. `;
                     if (userAnswerIndex === correctAnswerIndex) {
-                        questionPoints = pointsPerMainQuestion; // Đạt điểm tối đa cho câu MC
-                        isQuestionCorrectForFilter = true; // Đánh dấu câu đúng
+                        questionPoints = pointsPerMainQuestion;
+                        isQuestionCorrectForFilter = true;
                         resultP.innerHTML += `<span class="correct">Đúng!</span>`;
                     } else {
-                        isQuestionCorrectForFilter = false; // Đánh dấu câu sai
+                        isQuestionCorrectForFilter = false;
                         resultP.innerHTML += `<span class="incorrect">Sai.</span> Đáp án đúng là: <span class="correct">${correctAnswerText}</span>`;
                     }
                  } else {
-                    isQuestionCorrectForFilter = false; // Chưa trả lời = sai
+                    isQuestionCorrectForFilter = false;
                     const correctAnswerText = q.options[correctAnswerIndex];
                     resultP.innerHTML += `&nbsp;&nbsp;<span class="incorrect">Bạn chưa trả lời.</span> Đáp án đúng là: <span class="correct">${correctAnswerText}</span>`;
                  }
@@ -222,19 +382,21 @@ document.addEventListener('DOMContentLoaded', () => {
              } else if (q.type === 'tf') {
                  const resultDiv = document.createElement('div');
                  resultDiv.innerHTML = `<strong>Câu ${questionCounter} (Đúng/Sai):</strong> ${q.question}<br>`;
-                 let pointsForThisTF = 0; // *** KHỞI TẠO ĐIỂM CHO CÂU TF NÀY ***
-                 const pointsPerStatement = pointsPerMainQuestion * 0.25; // Điểm cho mỗi ý đúng (25%)
-                 let correctStatementsCount = 0; // Đếm số mệnh đề đúng
+                 let pointsForThisTF = 0;
+                 const pointsPerStatement = pointsPerMainQuestion * 0.25;
+                 let correctStatementsCount = 0;
 
                  q.statements.forEach((statement, subIndex) => {
                      const statementResultDiv = document.createElement('div');
                      statementResultDiv.classList.add('statement-result-item');
                      statementResultDiv.innerHTML = `&nbsp;&nbsp;- ${statement.text}: `;
-                     const selectedTFInput = document.querySelector(`input[name="question-${index}-statement-${subIndex}"]:checked`);
-                     const allTFInputs = document.querySelectorAll(`input[name="question-${index}-statement-${subIndex}"]`);
+                     const selectedTFInput = quizContentContainer.querySelector(`input[name="question-${index}-statement-${subIndex}"]:checked`);
+                     const allTFInputs = quizContentContainer.querySelectorAll(`input[name="question-${index}-statement-${subIndex}"]`);
                      const correctAnswerBool = statement.correctAnswer;
-                     const trueLabel = document.getElementById(`q${index}_s${subIndex}_true`);
-                     const falseLabel = document.getElementById(`q${index}_s${subIndex}_false`);
+                     // Lấy label bằng cách tìm trong DOM thay vì ID cố định (an toàn hơn)
+                     const trueLabel = quizContentContainer.querySelector(`input[name="question-${index}-statement-${subIndex}"][value="true"]`)?.closest('label');
+                     const falseLabel = quizContentContainer.querySelector(`input[name="question-${index}-statement-${subIndex}"][value="false"]`)?.closest('label');
+
 
                      allTFInputs.forEach(input => input.disabled = true);
                      if (correctAnswerBool === true && trueLabel) trueLabel.classList.add('correct-option');
@@ -246,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
                          const selectedLabel = selectedTFInput.closest('label');
                          statementResultDiv.innerHTML += `Bạn chọn <span class="user-answer">${userAnswerBool ? 'Đúng' : 'Sai'}</span>. `;
                          if (userAnswerBool === correctAnswerBool) {
-                             pointsForThisTF += pointsPerStatement; // *** CỘNG DỒN ĐIỂM CHO MỖI Ý ĐÚNG ***
+                             pointsForThisTF += pointsPerStatement; // Cộng dồn điểm ý đúng
                              correctStatementsCount++;
                              statementResultDiv.innerHTML += `<span class="correct">Chính xác!</span>`;
                          } else {
@@ -258,35 +420,25 @@ document.addEventListener('DOMContentLoaded', () => {
                      }
                      resultDiv.appendChild(statementResultDiv);
                  });
-
-                 // Gán điểm tổng cộng của các ý đúng cho câu TF này
-                 questionPoints = pointsForThisTF;
-
-                 // Đánh dấu cho bộ lọc (đúng nếu có ít nhất 1 ý đúng)
-                 isQuestionCorrectForFilter = correctStatementsCount > 0;
+                 questionPoints = pointsForThisTF; // Gán điểm tổng cộng của các ý đúng
+                 isQuestionCorrectForFilter = correctStatementsCount > 0; // Đánh dấu cho bộ lọc
                  resultDiv.dataset.correctness = isQuestionCorrectForFilter ? 'correct' : 'incorrect';
                  resultContainer.appendChild(resultDiv);
              }
-             totalScore += questionPoints; // Cộng điểm của câu hỏi này vào tổng điểm
+             totalScore += questionPoints;
         });
 
-        // Làm tròn tổng điểm cuối cùng (thang 10)
-        // Đảm bảo điểm không vượt quá 10 (do lỗi làm tròn nhỏ có thể xảy ra)
         if (totalScore > 10) totalScore = 10;
         const finalScoreRounded = totalScore.toFixed(2);
 
-
-        // Cập nhật hiển thị điểm
         scoreContainer.innerHTML = `Kết quả: <strong style="font-size: 1.1em;">Điểm: ${finalScoreRounded} / 10</strong>`;
         scoreContainer.style.display = 'block';
         filterContainer.style.display = 'block';
         resultContainer.style.display = 'block';
-
-        // Cập nhật trạng thái nút
         submitButton.style.display = 'none';
-        retryButton.style.display = 'inline-block';
+        retryButton.style.display = 'inline-block'; // Hiện nút Làm lại (quay về quiz list)
+        backToListAfterResultBtn.style.display = 'inline-block'; // Hiện nút Quay lại danh sách
 
-        // Áp dụng bộ lọc mặc định (Tất cả) và reset trạng thái nút lọc
         applyFilter('all');
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.classList.remove('active');
@@ -303,43 +455,47 @@ document.addEventListener('DOMContentLoaded', () => {
         const resultItems = resultContainer.querySelectorAll('p[data-correctness], div[data-correctness]');
         resultItems.forEach(item => {
             const correctness = item.dataset.correctness;
-             item.classList.remove('hidden-result'); // Reset class ẩn
-
-            if (filterType === 'all') {
-                // Hiện tất cả (không cần làm gì thêm)
-            } else if (filterType === 'correct') {
-                if (correctness !== 'correct') item.classList.add('hidden-result');
-            } else if (filterType === 'incorrect') {
-                if (correctness === 'correct') item.classList.add('hidden-result');
-            }
+             item.classList.remove('hidden-result');
+            if (filterType === 'all') { /* No action needed */ }
+            else if (filterType === 'correct') { if (correctness !== 'correct') item.classList.add('hidden-result'); }
+            else if (filterType === 'incorrect') { if (correctness === 'correct') item.classList.add('hidden-result'); }
         });
     }
 
-    // --- Hàm xử lý khi nhấn nút Làm lại (Giữ nguyên) ---
-    function retryQuiz() {
+    // --- Hàm xử lý khi nhấn nút Làm lại (Quay về danh sách bài thi) ---
+    function handleRetryQuiz() {
         if (timerIntervalId) { clearInterval(timerIntervalId); timerIntervalId = null; }
-        quizSection.style.display = 'none';
-        resultContainer.style.display = 'none';
-        scoreContainer.style.display = 'none';
-        filterContainer.style.display = 'none';
-        infoScreen.style.display = 'block';
-        updateInfoScreen();
-        updateTimerDisplay(); // Reset màu timer
+        // Quay về màn hình danh sách bài thi của môn học hiện tại
+        if (selectedSubjectSlug) {
+            displayQuizList(selectedSubjectSlug);
+        } else {
+            displaySubjectSelection(); // Nếu không có môn nào được chọn thì về màn hình chính
+        }
     }
 
-    // --- Hàm xử lý khi nhấn nút Bắt đầu (Giữ nguyên) ---
+    // --- Hàm xử lý khi nhấn nút Bắt đầu ---
     function handleStartQuiz() {
-        infoScreen.style.display = 'none';
-        quizSection.style.display = 'block';
-        displayQuestions();
-        startTimer();
+        if (!selectedQuizData) return;
+        displayQuizContent(selectedQuizData.questions); // Truyền câu hỏi vào hàm
+        startTimer(selectedQuizData.timeLimitMinutes); // Bắt đầu timer với thời gian của bài thi
+        navigateTo('quiz'); // Chuyển sang màn hình làm bài
     }
 
-    // --- Gắn sự kiện (Giữ nguyên) ---
+    // --- Gắn sự kiện ---
     startBtn.addEventListener('click', handleStartQuiz);
     submitButton.addEventListener('click', () => calculateScore(false));
-    retryButton.addEventListener('click', retryQuiz);
-    filterContainer.addEventListener('click', (event) => { // Event delegation cho bộ lọc
+    retryButton.addEventListener('click', handleRetryQuiz); // Nút Làm lại giờ gọi handleRetryQuiz
+    backToListAfterResultBtn.addEventListener('click', handleRetryQuiz); // Nút quay lại sau kết quả cũng quay về list
+
+    // Nút quay lại
+    backToSubjectsBtn.addEventListener('click', displaySubjectSelection);
+    backToQuizListBtn.addEventListener('click', () => {
+        if (selectedSubjectSlug) displayQuizList(selectedSubjectSlug);
+        else displaySubjectSelection();
+    });
+
+    // Bộ lọc
+    filterContainer.addEventListener('click', (event) => {
         if (event.target.classList.contains('filter-btn')) {
             const filterType = event.target.dataset.filter;
             filterContainer.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
@@ -348,6 +504,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Khởi tạo ban đầu (Giữ nguyên) ---
-    updateInfoScreen();
+    // --- Khởi tạo ứng dụng ---
+    displaySubjectSelection(); // Bắt đầu bằng màn hình chọn môn học
 });
