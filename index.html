@@ -15,6 +15,39 @@
         <div id="subject-selection-screen" class="screen active">
             <div class="screen-container">
                 <h1>Chọn Môn Học</h1>
+
+                <div id="countdown-container">
+                    <div id="countdown-title">Thời gian còn lại đến ngày thi dự kiến:</div> <div id="countdown">
+                        <div class="time-unit">
+                            <div class="digits">
+                                <span class="digit-container"><span class="digit" id="days-tens">0</span></span>
+                                <span class="digit-container"><span class="digit" id="days-units">0</span></span>
+                            </div>
+                            <span>Ngày</span>
+                        </div>
+                        <div class="time-unit">
+                            <div class="digits">
+                                <span class="digit-container"><span class="digit" id="hours-tens">0</span></span>
+                                <span class="digit-container"><span class="digit" id="hours-units">0</span></span>
+                            </div>
+                            <span>Giờ</span>
+                        </div>
+                        <div class="time-unit">
+                             <div class="digits">
+                                <span class="digit-container"><span class="digit" id="minutes-tens">0</span></span>
+                                <span class="digit-container"><span class="digit" id="minutes-units">0</span></span>
+                             </div>
+                            <span>Phút</span>
+                        </div>
+                        <div class="time-unit">
+                             <div class="digits">
+                                <span class="digit-container"><span class="digit" id="seconds-tens">0</span></span>
+                                <span class="digit-container"><span class="digit" id="seconds-units">0</span></span>
+                             </div>
+                            <span>Giây</span>
+                        </div>
+                    </div>
+                    <div id="message"></div> </div>
                 <p>Chọn môn học bạn muốn ôn tập trắc nghiệm:</p>
                 <div id="subject-list" class="grid-container">
                     </div>
@@ -22,56 +55,51 @@
         </div>
 
         <div id="quiz-list-screen" class="screen">
-            <div class="screen-container">
-                <button id="back-to-subjects-btn" class="back-button"><i class="ph ph-arrow-left"></i> Quay lại</button>
-                <h1 id="quiz-list-title">Danh sách bài thi môn: <span>...</span></h1>
-                <div id="quiz-list" class="list-container">
-                    </div>
-            </div>
-        </div>
-
-        <div id="info-screen" class="screen">
-             <div class="screen-container info-container">
-                <button id="back-to-quiz-list-btn" class="back-button"><i class="ph ph-arrow-left"></i> Quay lại</button>
-                <h1 id="quiz-title">Tên Bài Thi</h1>
-                <p>Thông tin chi tiết về bài thi:</p>
-                <div class="info-details">
-                    <p><strong><i class="ph ph-list-checks"></i> Số lượng câu hỏi:</strong> <span id="info-total-questions">0</span></p>
-                    <p><strong><i class="ph ph-timer"></i> Thời gian làm bài:</strong> <span id="info-time-limit">0</span> phút</p>
-                </div>
-                <p>Nhấn nút bên dưới để bắt đầu làm bài.</p>
-                <button id="start-btn" class="start-button">Bắt đầu làm bài</button>
+             <div class="screen-container">
+                 <button id="back-to-subjects-btn" class="back-button"><i class="ph ph-arrow-left"></i> Quay lại</button>
+                 <h1 id="quiz-list-title">Danh sách bài thi môn: <span>...</span></h1>
+                 <div id="quiz-list" class="list-container">
+                     </div>
              </div>
-        </div>
+         </div>
 
-        <div id="quiz-section" class="screen">
-            <div class="screen-container quiz-active-container">
-                <div id="timer-container">
-                    <i class="ph ph-timer"></i> Thời gian: <span id="time-left">00:00</span>
-                </div>
+         <div id="info-screen" class="screen">
+              <div class="screen-container info-container">
+                 <button id="back-to-quiz-list-btn" class="back-button"><i class="ph ph-arrow-left"></i> Quay lại</button>
+                 <h1 id="quiz-title">Tên Bài Thi</h1>
+                 <p>Thông tin chi tiết về bài thi:</p>
+                 <div class="info-details">
+                     <p><strong><i class="ph ph-list-checks"></i> Số lượng câu hỏi:</strong> <span id="info-total-questions">0</span></p>
+                     <p><strong><i class="ph ph-timer"></i> Thời gian làm bài:</strong> <span id="info-time-limit">0</span> phút</p>
+                 </div>
+                 <p>Nhấn nút bên dưới để bắt đầu làm bài.</p>
+                 <button id="start-btn" class="start-button">Bắt đầu làm bài</button>
+              </div>
+         </div>
 
-                <div id="quiz">
-                    </div>
-
-                <div class="button-container">
-                     <button id="submit-btn">Nộp bài</button>
-                     <button id="retry-btn" style="display: none;">Làm lại</button>
-                     <button id="back-to-list-after-result-btn" style="display: none;" class="secondary-button">Về danh sách bài thi</button>
-                </div>
-
-                <div id="score-container" style="display: none;">
-                    </div>
-
-                <div id="filter-container" style="display: none;">
-                    <button class="filter-btn active" data-filter="all">Tất cả</button>
-                    <button class="filter-btn" data-filter="correct">Chỉ câu đúng</button>
-                    <button class="filter-btn" data-filter="incorrect">Chỉ câu sai</button>
-                </div>
-
-                <div id="result-container" style="display: none;">
-                    </div>
-            </div>
-        </div>
+         <div id="quiz-section" class="screen">
+             <div class="screen-container quiz-active-container">
+                 <div id="timer-container">
+                     <i class="ph ph-timer"></i> Thời gian: <span id="time-left">00:00</span>
+                 </div>
+                 <div id="quiz">
+                     </div>
+                 <div class="button-container">
+                      <button id="submit-btn">Nộp bài</button>
+                      <button id="retry-btn" style="display: none;">Làm lại</button>
+                      <button id="back-to-list-after-result-btn" style="display: none;" class="secondary-button">Về danh sách bài thi</button>
+                 </div>
+                 <div id="score-container" style="display: none;">
+                     </div>
+                 <div id="filter-container" style="display: none;">
+                     <button class="filter-btn active" data-filter="all">Tất cả</button>
+                     <button class="filter-btn" data-filter="correct">Chỉ câu đúng</button>
+                     <button class="filter-btn" data-filter="incorrect">Chỉ câu sai</button>
+                 </div>
+                 <div id="result-container" style="display: none;">
+                     </div>
+             </div>
+         </div>
 
     </div><script src="script.js"></script>
 </body>
